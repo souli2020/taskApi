@@ -5,6 +5,7 @@ require('dotenv').config()
 const app = express()
 
 //middleware
+app.use(express.static('./public'))
 app.use(express.json())
 
 //Route
