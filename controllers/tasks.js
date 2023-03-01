@@ -29,17 +29,37 @@ const createTask = async (req, res) => {
 
 }
 
-const deleteTask = (req, res) => {
-    const { id } = req.params
-    res.status(200).send(`the element with id ${id} was deleted`)
+const deleteTask = async (req, res) => {
+    try {
+
+        const { id } = req.params
+        const task = await Task.findOneAndDelete({ _id: id })
+        res.status(200).json({ task })
+    } catch (error) {
+
+        res.status(500).json({ msg: error })
+
+    }
 }
 
-const updateTask = (req, res) => {
-    const { id } = req.params
-    res.status(200).send(`the element with id ${id} was updated`)
+const updateTask = async (req, res) => {
+    try {
+
+        const { id } = req.params
+        const task = await Task.findOneAndUpdate({ _id: id }, req.body, { new: true, upsert: true })
+        res.status(200).json({ task })
+    } catch (error) {
+        res.status(500).json({ msg: error })
+    }
 
 }
-const deletAll = (req, res) => {
-    res.status(200).send('all tasks deleted!')
+const deletAll = async (req, res) => {
+    try {
+        const task = await Task.deleteMany()
+        res.status(200).json({ task })
+    } catch (error) {
+        res.status(500).json({ msg: error })
+
+    }
 }
 module.exports = { getAllTasks, getSingleTask, createTask, deleteTask, updateTask, deletAll }
