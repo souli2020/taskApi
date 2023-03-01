@@ -1,65 +1,46 @@
 //import the schema model
 
 const Task = require('../models/task')
+const noTry = require('../middlewares/noTry')
 
 const getAllTasks = async (req, res) => {
-    try {
-        const task = await Task.find({})
-        res.status(200).json({ task })
-    } catch (error) {
-        res.status(500).json({ msg: error })
-    }
+    const tasks = await Task.find({})
+    res.status(200).json({ tasks })
 }
 
-const getSingleTask = (req, res) => {
+const getSingleTask = async (req, res) => {
     const { id } = req.params
-    res.status(200).send(`this is the  element with id ${id}`)
+    const task = await Task.findOne({ _id: id })
+    res.status(200).json({ task })
 }
+
 const createTask = async (req, res) => {
-    try {
-        // const {task} = req.body
-        const task = await Task.create(req.body)
-        res.status(200).json({ task })
-
-    } catch (error) {
-
-        res.status(500).json({ msg: error })
-
-    }
-
+    const task = await Task.create(req.body)
+    res.status(201).json({ task })
 }
 
 const deleteTask = async (req, res) => {
-    try {
-
-        const { id } = req.params
-        const task = await Task.findOneAndDelete({ _id: id })
-        res.status(200).json({ task })
-    } catch (error) {
-
-        res.status(500).json({ msg: error })
-
-    }
+    const { id } = req.params
+    const task = await Task.findOneAndDelete({ _id: id })
+    res.status(200).json({ task })
 }
 
 const updateTask = async (req, res) => {
-    try {
-
-        const { id } = req.params
-        const task = await Task.findOneAndUpdate({ _id: id }, req.body, { new: true, upsert: true })
-        res.status(200).json({ task })
-    } catch (error) {
-        res.status(500).json({ msg: error })
-    }
-
+    const { id } = req.params
+    const task = await Task.findOneAndUpdate({ _id: id }, req.body, { new: true, runValidators, upsert: true })
+    res.status(200).json({ task })
 }
-const deletAll = async (req, res) => {
-    try {
-        const task = await Task.deleteMany()
-        res.status(200).json({ task })
-    } catch (error) {
-        res.status(500).json({ msg: error })
 
-    }
+const deleteAllTasks = async (req, res) => {
+    const task = await Task.deleteMany()
+    res.status(200).json({ task })
 }
-module.exports = { getAllTasks, getSingleTask, createTask, deleteTask, updateTask, deletAll }
+
+module.exports = {
+    getAllTasks: noTry(getAllTasks),
+    getSingleTask: noTry(getSingleTask),
+    createTask: noTry(createTask),
+    deleteTask: noTry(deleteTask),
+    updateTask: noTry(updateTask),
+    deleteAllTasks: noTry(deleteAllTasks)
+}

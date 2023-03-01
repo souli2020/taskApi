@@ -1,5 +1,5 @@
 const express = require('express')
-const { getAllTasks, createTask, deleteTask, getSingleTask, updateTask, deletAll } = require('../controllers/tasks')
+const { getAllTasks, createTask, deleteTask, getSingleTask, updateTask, deleteAllTasks } = require('../controllers/tasks')
 const router = express.Router()
 
 router.get('/', getAllTasks)
@@ -9,6 +9,6 @@ router.get('/:id', getSingleTask)
 router.patch('/:id', updateTask)
 
 //bonus
-router.delete('/', deletAll)
+router.delete('/', deleteAllTasks)
 
 module.exports = router
